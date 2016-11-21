@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#570F01</color>
+    <color name="colorPrimaryDark">#f0AAB4</color>
+    <color name="colorAccent">#2A1B1E</color>
+    <color name="mywhite">#E6EAED</color>
+    <color name="myyellow">#E7CA84</color>
+    <color name="mycamel">#A84D07</color>
+    <color name="myblueberry">#2A1B1E</color>
+    <color name="mywine">#570F01</color>
+    <color name="mypink">#E13C5C</color>
+    <color name="mybabypink">#f0AAB4</color>
+</resources>
