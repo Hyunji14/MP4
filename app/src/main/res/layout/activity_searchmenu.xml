@@ -4,7 +4,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.lp.lastpictures.SearchMenuActivity">
+    tools:context="com.example.lp.lastpictures.SearchMenuActivity"
+    android:layout_marginLeft="50dp">
 
     <TextView
         android:layout_width="wrap_content"
@@ -15,10 +16,11 @@
         android:textSize="25dp"
         android:textIsSelectable="false"
         android:layout_alignParentTop="true"
+        android:textAlignment="center"
         android:layout_centerHorizontal="true" />
 
     <SearchView
-        android:layout_width="wrap_content"
+        android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:id="@+id/searchView"
         android:layout_marginTop="48dp"

@@ -2,6 +2,7 @@ package com.example.lp.lastpictures;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -12,7 +13,7 @@ import android.widget.TabHost;
  * Created by Rete on 2016-11-21.
  */
 
-public class SelectFindActivity {
+public class SelectFindActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
     public String[] arrlist={"1번", "2번", "3번"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +67,7 @@ public class SelectFindActivity {
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l){
         String cList =arrlist[i];
-        Intent intent1 = new Intent(SelectFindActivity.this, SearchMenu.class);
+        Intent intent1 = new Intent(SelectFindActivity.this, SearchMenuActivity.class);
         intent1.putExtra("arr_text", cList);
         startActivity(intent1);
 
