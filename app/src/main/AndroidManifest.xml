@@ -20,6 +20,7 @@
         </activity>
         <activity android:name=".SearchMenuActivity"></activity>
         <activity android:name=".SelectFindActivity"></activity>
+        <activity android:name=".NMapViewActivity"></activity>
     </application>
 
 </manifest>

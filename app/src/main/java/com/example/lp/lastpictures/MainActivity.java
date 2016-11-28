@@ -26,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
         mainB.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                Intent intent1 = new Intent(MainActivity.this, SelectFindActivity.class);
+                //Intent intent1 = new Intent(MainActivity.this, SelectFindActivity.class);
+                Intent intent1 = new Intent(MainActivity.this, NMapViewActivity.class);
                 startActivity(intent1);
             }
         });
