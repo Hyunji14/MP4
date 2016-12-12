@@ -1,11 +1,18 @@
 package com.example.lp.lastpictures;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.nhn.android.maps.NMapActivity;
 import com.nhn.android.maps.NMapController;
@@ -17,7 +24,7 @@ import com.nhn.android.maps.nmapmodel.NMapError;
  * Created by Hwang on 2016-11-28.
  */
 
-public class NMapViewActivity extends NMapActivity {
+public class NMapViewActivity extends NMapActivity implements LocationListener {
 
     String clientID = "6tbLoSmdmKXBTMRK3uO3";
 
@@ -47,7 +54,33 @@ public class NMapViewActivity extends NMapActivity {
 
 // use map controller to zoom in/out, pan and set map center, zoom level etc.
         NMapController mMapController = mMapView.getMapController();
+        mMapView.setBuiltInZoomControls(true, null);
+
+
+        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    //현재 gps 작업중
+        //manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, (LocationListener) this);
  }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
+    }
 
 
     private class MapContainerView extends ViewGroup {
