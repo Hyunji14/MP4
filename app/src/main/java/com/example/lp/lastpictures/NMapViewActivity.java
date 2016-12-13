@@ -3,6 +3,7 @@ package com.example.lp.lastpictures;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -14,11 +15,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 import com.nhn.android.maps.NMapActivity;
 import com.nhn.android.maps.NMapController;
 import com.nhn.android.maps.NMapView;
 import com.nhn.android.maps.maplib.NGeoPoint;
 import com.nhn.android.maps.nmapmodel.NMapError;
+import com.nhn.android.maps.overlay.NMapPOIdata;
+import com.nhn.android.maps.overlay.NMapPOIitem;
+import com.nhn.android.mapviewer.overlay.NMapMyLocationOverlay;
+
+import java.util.ArrayList;
 
 /**
  * Created by Hwang on 2016-11-28.
@@ -26,16 +34,19 @@ import com.nhn.android.maps.nmapmodel.NMapError;
 
 public class NMapViewActivity extends NMapActivity implements LocationListener {
 
+    private static final int MY_PERMISSIONS_COARSE_LOCATION = 1;
+    private static final int MY_PERMISSIONS_FINE_LOCATION = 2;
     String clientID = "6tbLoSmdmKXBTMRK3uO3";
 
     //private MapContainerView mMapContainerView;
 
     private NMapView mMapView;
-    private NMapController mMapController;
     private MapContainerView mMapContainerView;
+    NMapController mMapController ;
 
     //private NMapViewerResourceProvider mMapViewerResourceProvider;
-
+    double lat;
+    double lon;
 
     @Override
     protected void onCreate(Bundle bundle) {
@@ -45,25 +56,111 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
 
         mMapView.setClientId(clientID);
 
-        mMapController = mMapView.getMapController();
-
         setContentView(mMapView);
 
 // initialize map view
         mMapView.setClickable(true);
 
+
 // use map controller to zoom in/out, pan and set map center, zoom level etc.
-        NMapController mMapController = mMapView.getMapController();
+        mMapController = mMapView.getMapController();
+
         mMapView.setBuiltInZoomControls(true, null);
 
+        Toast.makeText(this, "여기까지", Toast.LENGTH_SHORT).show();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    MY_PERMISSIONS_COARSE_LOCATION);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_FINE_LOCATION);
+        }
 
         LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-    //현재 gps 작업중
-        //manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, (LocationListener) this);
- }
+
+        //권한설정
+
+
+
+        Location location = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+        if (location != null) {
+            lat = location.getLatitude();
+            lon = location.getLongitude();
+        } else {
+
+
+            location = manager.getLastKnownLocation(manager.NETWORK_PROVIDER);
+            if (location != null) {
+                lat = location.getLatitude();
+                lon = location.getLongitude();
+                Toast.makeText(this, "정확한 위치정보를 위해 GPS를 켜주세요.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "위치를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        showLocation(lat, lon);
+
+
+
+
+        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) this);
+        //showLocation(lat,lon);
+
+
+
+    }
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        if (requestCode>0) {
+
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // 권한 허가
+                    // 해당 권한을 사용해서 작업을 진행할 수 있습니다
+                } else {
+                    // 권한 거부
+                    // 사용자가 해당권한을 거부했을때 해주어야 할 동작을 수행합니다
+                }
+                return;
+        }
+    }
+
+
+
+    private void showLocation(double latitude, double logitude){
+        NMapViewerResourceProvider mMapViewerResourceProvider = null;
+        NGeoPoint mypoint = new NGeoPoint(logitude, latitude);
+
+        int markerID = NMapPOIflagType.PIN;
+
+        NMapPOIdata poIdata = new NMapPOIdata(1, mMapViewerResourceProvider);
+        poIdata.beginPOIdata(1);
+        poIdata.addPOIitem(mypoint, "", markerID, 0);
+
+        mMapController.animateTo(mypoint);
+
+
+
+    }
 
     @Override
     public void onLocationChanged(Location location) {
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+
+        showLocation(latitude,longitude);
 
     }
 
@@ -106,13 +203,7 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
         }
     }
 
-    public void onMapInitHandler(NMapView mapView, NMapError errorInfo) {
-        if (errorInfo == null) { // success
-            mMapController.setMapCenter(new NGeoPoint(126.978371, 37.5666091), 11);
-        } else { // fail
-            //Log.e(LOG_TAG, "onMapInitHandler: error=" + errorInfo.toString());
-        }
-    }
+
 
 
 }
