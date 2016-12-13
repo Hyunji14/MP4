@@ -15,8 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.gun0912.tedpermission.PermissionListener;
-import com.gun0912.tedpermission.TedPermission;
 import com.nhn.android.maps.NMapActivity;
 import com.nhn.android.maps.NMapController;
 import com.nhn.android.maps.NMapView;
@@ -25,6 +23,8 @@ import com.nhn.android.maps.nmapmodel.NMapError;
 import com.nhn.android.maps.overlay.NMapPOIdata;
 import com.nhn.android.maps.overlay.NMapPOIitem;
 import com.nhn.android.mapviewer.overlay.NMapMyLocationOverlay;
+import com.nhn.android.mapviewer.overlay.NMapOverlayManager;
+import com.nhn.android.mapviewer.overlay.NMapPOIdataOverlay;
 
 import java.util.ArrayList;
 
@@ -52,7 +52,7 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
-        NMapView mMapView = new NMapView(this);//view 객체 생성
+        mMapView = new NMapView(this);//view 객체 생성
 
         mMapView.setClientId(clientID);
 
@@ -125,29 +125,39 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
                                            String permissions[], int[] grantResults) {
         if (requestCode>0) {
 
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // 권한 허가
-                    // 해당 권한을 사용해서 작업을 진행할 수 있습니다
-                } else {
-                    // 권한 거부
-                    // 사용자가 해당권한을 거부했을때 해주어야 할 동작을 수행합니다
-                }
-                return;
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // 권한 허가
+                // 해당 권한을 사용해서 작업을 진행할 수 있습니다
+            } else {
+                // 권한 거부
+                // 사용자가 해당권한을 거부했을때 해주어야 할 동작을 수행합니다
+            }
+            return;
         }
     }
 
 
 
-    private void showLocation(double latitude, double logitude){
+    private void showLocation(double latitude, double longitude){
         NMapViewerResourceProvider mMapViewerResourceProvider = null;
-        NGeoPoint mypoint = new NGeoPoint(logitude, latitude);
+        NMapOverlayManager mMapOverlayManager;
+
+        mMapViewerResourceProvider = new NMapViewerResourceProvider(this);
+        mMapOverlayManager = new NMapOverlayManager(this, mMapView, mMapViewerResourceProvider);
+
+        NGeoPoint mypoint = new NGeoPoint(longitude, latitude);
+
 
         int markerID = NMapPOIflagType.PIN;
 
         NMapPOIdata poIdata = new NMapPOIdata(1, mMapViewerResourceProvider);
         poIdata.beginPOIdata(1);
         poIdata.addPOIitem(mypoint, "", markerID, 0);
+        poIdata.endPOIdata();
+
+        NMapPOIdataOverlay poIdataOverlay = mMapOverlayManager.createPOIdataOverlay(poIdata,null);
+        poIdataOverlay.showAllPOIdata(0);
 
         mMapController.animateTo(mypoint);
 
