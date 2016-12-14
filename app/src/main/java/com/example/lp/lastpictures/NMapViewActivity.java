@@ -20,6 +20,7 @@ import com.nhn.android.maps.NMapController;
 import com.nhn.android.maps.NMapView;
 import com.nhn.android.maps.maplib.NGeoPoint;
 import com.nhn.android.maps.nmapmodel.NMapError;
+import com.nhn.android.maps.nmapmodel.NMapPlacemark;
 import com.nhn.android.maps.overlay.NMapPOIdata;
 import com.nhn.android.maps.overlay.NMapPOIitem;
 import com.nhn.android.mapviewer.overlay.NMapMyLocationOverlay;
@@ -44,14 +45,19 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
     private MapContainerView mMapContainerView;
     NMapController mMapController ;
     NMapPOIdata poIdata;
+    NMapPlacemark mMapPlacemark;
 
     //private NMapViewerResourceProvider mMapViewerResourceProvider;
     double lat;
     double lon;
 
+    String current_location; //좌표->주소 변수
+
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+
+        super.setMapDataProviderListener(onDataProviderListener);
 
         mMapView = new NMapView(this);//view 객체 생성
 
@@ -61,14 +67,14 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
 
 // initialize map view
         mMapView.setClickable(true);
-
+        mMapPlacemark = new NMapPlacemark();
 
 // use map controller to zoom in/out, pan and set map center, zoom level etc.
         mMapController = mMapView.getMapController();
 
         mMapView.setBuiltInZoomControls(true, null);
 
-        Toast.makeText(this, "여기까지", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "여기까지", Toast.LENGTH_SHORT).show();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -101,15 +107,13 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
             if (location != null) {
                 lat = location.getLatitude();
                 lon = location.getLongitude();
-                Toast.makeText(this, "정확한 위치정보를 위해 GPS를 켜주세요.", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "정확한 위치정보를 위해 GPS를 켜주세요.", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "위치를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "위치를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
             }
         }
 
         showLocation(lat, lon);
-
-
 
 
         manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) this);
@@ -119,6 +123,27 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
 
     }
 
+
+
+
+    private final NMapActivity.OnDataProviderListener onDataProviderListener = new NMapActivity.OnDataProviderListener() {
+
+        @Override
+        public void onReverseGeocoderResponse(NMapPlacemark placeMark, NMapError errInfo) {//문제의 부분
+
+            if (errInfo != null) {
+                Log.e("myLog", "Failed to findPlacemarkAtLocation: error=" + errInfo.toString());
+                Toast.makeText(NMapViewActivity.this, errInfo.toString(), Toast.LENGTH_LONG).show();
+                return ;
+            }else{
+                //Toast.makeText(NMapViewActivity.this, placeMark.toString(), Toast.LENGTH_LONG).show();
+                current_location = placeMark.toString();//안되는 부분 여기서 placeMark 를 current_location으로 넘기고 싶은데 안넘어감
+                //Toast.makeText(NMapViewActivity.this, current_location, Toast.LENGTH_LONG).show(); 이건 또 잘됨 시벌탱
+            }
+
+        }
+
+    };
 
 
     @Override
@@ -148,7 +173,13 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
         mMapOverlayManager = new NMapOverlayManager(this, mMapView, mMapViewerResourceProvider);
 
         NGeoPoint mypoint = new NGeoPoint(longitude, latitude);
-        String st_mypoint = mypoint+"";
+
+        findPlacemarkAtLocation(longitude, latitude);
+
+        //current_location = mMapPlacemark.toString();
+
+        String st_mypoint = current_location;
+        Toast.makeText(NMapViewActivity.this, current_location, Toast.LENGTH_LONG).show();
 
 
         int markerID = NMapPOIflagType.PIN;
