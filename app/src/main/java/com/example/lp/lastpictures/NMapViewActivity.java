@@ -43,6 +43,7 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
     private NMapView mMapView;
     private MapContainerView mMapContainerView;
     NMapController mMapController ;
+    NMapPOIdata poIdata;
 
     //private NMapViewerResourceProvider mMapViewerResourceProvider;
     double lat;
@@ -147,20 +148,23 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
         mMapOverlayManager = new NMapOverlayManager(this, mMapView, mMapViewerResourceProvider);
 
         NGeoPoint mypoint = new NGeoPoint(longitude, latitude);
+        String st_mypoint = mypoint+"";
 
 
         int markerID = NMapPOIflagType.PIN;
+        if (poIdata != null){
+            poIdata.removeAllPOIdata();
+        }
 
-        NMapPOIdata poIdata = new NMapPOIdata(1, mMapViewerResourceProvider);
+        poIdata = new NMapPOIdata(1, mMapViewerResourceProvider);
         poIdata.beginPOIdata(1);
-        poIdata.addPOIitem(mypoint, "", markerID, 0);
+        poIdata.addPOIitem(mypoint, st_mypoint, markerID, 0);
         poIdata.endPOIdata();
 
         NMapPOIdataOverlay poIdataOverlay = mMapOverlayManager.createPOIdataOverlay(poIdata,null);
         poIdataOverlay.showAllPOIdata(0);
 
         mMapController.animateTo(mypoint);
-
 
 
     }
