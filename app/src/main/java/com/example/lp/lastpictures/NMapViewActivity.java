@@ -38,6 +38,7 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
     private static final int MY_PERMISSIONS_COARSE_LOCATION = 1;
     private static final int MY_PERMISSIONS_FINE_LOCATION = 2;
     String clientID = "6tbLoSmdmKXBTMRK3uO3";
+    String Client_Secret = "o02DkUdPPM";
 
     //private MapContainerView mMapContainerView;
 
@@ -94,30 +95,31 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
         //권한설정
 
 
-
         Location location = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         if (location != null) {
             lat = location.getLatitude();
             lon = location.getLongitude();
-        } else {
-
+        }
+        else {
 
             location = manager.getLastKnownLocation(manager.NETWORK_PROVIDER);
             if (location != null) {
                 lat = location.getLatitude();
                 lon = location.getLongitude();
-                //Toast.makeText(this, "정확한 위치정보를 위해 GPS를 켜주세요.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "주변 기지국 위치를 잡았습니다", Toast.LENGTH_SHORT).show();
             } else {
                 //Toast.makeText(this, "위치를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
             }
         }
 
-        showLocation(lat, lon);
+
+      //  first_showLocation(lat,lon);
 
 
-        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) this);
-        //showLocation(lat,lon);
+        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, (LocationListener) this);
+
+
 
 
 
@@ -137,8 +139,8 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
                 return ;
             }else{
                 //Toast.makeText(NMapViewActivity.this, placeMark.toString(), Toast.LENGTH_LONG).show();
-                current_location = placeMark.toString();//안되는 부분 여기서 placeMark 를 current_location으로 넘기고 싶은데 안넘어감
-                //Toast.makeText(NMapViewActivity.this, current_location, Toast.LENGTH_LONG).show(); 이건 또 잘됨 시벌탱
+                current_location = placeMark.toString();
+                //Toast.makeText(NMapViewActivity.this, current_location, Toast.LENGTH_LONG).show();
             }
 
         }
@@ -166,20 +168,21 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
 
 
     private void showLocation(double latitude, double longitude){
+
         NMapViewerResourceProvider mMapViewerResourceProvider = null;
         NMapOverlayManager mMapOverlayManager;
 
         mMapViewerResourceProvider = new NMapViewerResourceProvider(this);
         mMapOverlayManager = new NMapOverlayManager(this, mMapView, mMapViewerResourceProvider);
 
-        NGeoPoint mypoint = new NGeoPoint(longitude, latitude);
-
         findPlacemarkAtLocation(longitude, latitude);
 
-        //current_location = mMapPlacemark.toString();
+        NGeoPoint mypoint = new NGeoPoint(longitude, latitude);
 
-        String st_mypoint = current_location;
-        Toast.makeText(NMapViewActivity.this, current_location, Toast.LENGTH_LONG).show();
+
+
+        String st_mypoint = current_location +"C";
+        //Toast.makeText(NMapViewActivity.this, current_location, Toast.LENGTH_LONG).show();
 
 
         int markerID = NMapPOIflagType.PIN;
@@ -206,6 +209,7 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
         double longitude = location.getLongitude();
 
         showLocation(latitude,longitude);
+        //Toast.makeText(NMapViewActivity.this, current_location, Toast.LENGTH_LONG).show();
 
     }
 
