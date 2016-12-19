@@ -212,6 +212,7 @@ public class FindAddressActivity extends Activity {
         }
     };
 
+    //으아러ㅏ을아ㅓ 너무 힘들앋라ㅡ다
 
     public class CafeData{//카페데이터 저장용
         String title;
