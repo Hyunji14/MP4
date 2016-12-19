@@ -2,6 +2,7 @@ package com.example.lp.lastpictures;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -40,6 +41,7 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
     String clientID = "6tbLoSmdmKXBTMRK3uO3";
     String Client_Secret = "o02DkUdPPM";
 
+
     //private MapContainerView mMapContainerView;
 
     private NMapView mMapView;
@@ -48,7 +50,7 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
     NMapPOIdata poIdata;
     NMapPlacemark mMapPlacemark;
 
-    //private NMapViewerResourceProvider mMapViewerResourceProvider;
+
     double lat;
     double lon;
 
@@ -113,20 +115,12 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
             }
         }
 
-
       //  first_showLocation(lat,lon);
 
-
-        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, (LocationListener) this);
-
-
-
+        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) this);
 
 
     }
-
-
-
 
     private final NMapActivity.OnDataProviderListener onDataProviderListener = new NMapActivity.OnDataProviderListener() {
 
@@ -181,7 +175,7 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
 
 
 
-        String st_mypoint = current_location +"C";
+        String st_mypoint = current_location +"";
         //Toast.makeText(NMapViewActivity.this, current_location, Toast.LENGTH_LONG).show();
 
 
@@ -192,16 +186,39 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
 
         poIdata = new NMapPOIdata(1, mMapViewerResourceProvider);
         poIdata.beginPOIdata(1);
+
         poIdata.addPOIitem(mypoint, st_mypoint, markerID, 0);
+
+
         poIdata.endPOIdata();
 
         NMapPOIdataOverlay poIdataOverlay = mMapOverlayManager.createPOIdataOverlay(poIdata,null);
+        poIdataOverlay.setOnStateChangeListener(onPOIdataStateChangeListener);
         poIdataOverlay.showAllPOIdata(0);
+
+
 
         mMapController.animateTo(mypoint);
 
 
     }
+
+    private final NMapPOIdataOverlay.OnStateChangeListener onPOIdataStateChangeListener = new NMapPOIdataOverlay.OnStateChangeListener() {
+
+        @Override
+        public void onFocusChanged(NMapPOIdataOverlay nMapPOIdataOverlay, NMapPOIitem nMapPOIitem) {
+
+        }
+
+        @Override
+        public void onCalloutClick(NMapPOIdataOverlay poiDataOverlay, NMapPOIitem item) {
+            String data = item.getTitle();
+            Intent intent = new Intent(NMapViewActivity.this, FindAddressActivity.class);
+            intent.putExtra("주소",data);
+            startActivity(intent);
+        }
+
+    };
 
     @Override
     public void onLocationChanged(Location location) {
@@ -212,6 +229,8 @@ public class NMapViewActivity extends NMapActivity implements LocationListener {
         //Toast.makeText(NMapViewActivity.this, current_location, Toast.LENGTH_LONG).show();
 
     }
+
+
 
     @Override
     public void onStatusChanged(String s, int i, Bundle bundle) {

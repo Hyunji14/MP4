@@ -21,6 +21,8 @@
         <activity android:name=".SearchMenuActivity"></activity>
         <activity android:name=".SelectFindActivity"></activity>
         <activity android:name=".NMapViewActivity"></activity>
+        <activity android:name=".FindAddressActivity"></activity>
+
     </application>
 
 </manifest>
